@@ -1,13 +1,13 @@
 # MistralRO-finetune
-Fine-tuning of a Mistral 7B model for QA in Romanian and additionally for text summarization in Romanian
+The following is a fine-tuning of a Mistral 7B model for QA in Romanian and additionally for text summarization in Romanian
 
 The Jupyter notebook is based on the Unsloth notebook https://github.com/unslothai/unsloth
 
-Unsloth was used to accelerate runtime. The base model is a 4 bit quantized version of Mistral. It was finedtuned using LoRA (https://arxiv.org/abs/2106.09685)
+Unsloth was used to accelerate runtime. The base model is a 4 bit quantized version of Mistral. It was finetuned using LoRA (https://arxiv.org/abs/2106.09685)
 
 ## Access the model and training set
 
-* The model is open access, you can load it from: https://huggingface.co/OctavianB/MistralRo
+* The romanian model is open access, you can load it from: https://huggingface.co/OctavianB/MistralRo
 * For the version finetuned on Romanian text summarization: https://huggingface.co/OctavianB/MistralRoSummary
 * The training set used to fine-tune for Romanian can also be accessed here: https://huggingface.co/datasets/fcolt99/combined_dataset
 
@@ -27,12 +27,36 @@ The [readerbench/ro-text-summarization](https://huggingface.co/datasets/readerbe
 *	Content contains the raw text
 *	Summary is the target output for said content
 
+## Training pipeline
 
+The overall outline of the training pipeline was the following:
+*	The OAST1 dataset is translated into Romanian using the OPUS1 model
+*	The Mistral7b instruct model is finetuned using LoRA and PEFT on the translated dataset to increase the model's ability to speak Romanian (takes ~10 minutes on the T4 GPU on free tier Google Colab using Unsloth
+*	The finetuned model is then trained on the ro-text-summarization dataset to obtain the second version of the finetune.
 
-## Testing
+Below are the training loss graphs for the two finetuned models (romanian finetuning on left, romanian text summarization finetuning on right):
+
+<div style="display: flex;" align="center">
+  <img src="./figs/Loss Romanian finetune.jpg" style="width: 40%;">
+  <img src="./figs/Loss Romanian finetune.jpg" style="width: 40%;">
+</div>
+
+## Evaluation
+
 
 The test samples were extracted from the romanian text summarization dataset, as a very small subset due to the slow inference time of the models. Model performance was evaluated using BERTScore, which is defined as the cosine similarity between the BERT embeddings of the input and the output text.
 
+We used the first n = 10 samples of the ro-text-summarization dataset to test each of the three models in conjunction with the BERT score to evaluate the text generations (relative to the ground-truth). The test sample size was small because of the limited resources at hand. 
+Below is a table containing the average of the three metrics given by the BERT score (precision, recall, f1) for each model over the ten samples.
 
+<div align="center">
+  
+| Metric | Mistral 7B | Mistral 7B Ro | Mistral 7B Ro Summary |
+|----------|:----------:|:----------:|:----------:|
+| Precision | 0.640 | 0.665 | 0.652 |
+| Recall | 0.670 | 0.690 | 0.679 |
+| F1 | 0.678 | 0.678 | 0.676 |
+
+</div>
   
 
