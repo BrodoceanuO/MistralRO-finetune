@@ -11,7 +11,7 @@ Unsloth was used to accelerate runtime. The base model is a 4 bit quantized vers
 * For the version finetuned on Romanian text summarization: https://huggingface.co/OctavianB/MistralRoSummary
 * The training set used to fine-tune for Romanian can also be accessed here: https://huggingface.co/datasets/fcolt99/combined_dataset
 
-## Training
+## Training sets
 
 To give the model a better understanding of romanian before using it for text summarization, a translated QA dataset was used for fine-tuning. A second round of fine-tuning on a romanian text summarization dataset was realized to improve its performance on this specific task.
 The  [OpenAssistant Conversations Dataset (oasst1)](https://huggingface.co/datasets/readerbench/ro-text-summarization) dataset containing 84400 text samples was used.
@@ -34,12 +34,14 @@ The overall outline of the training pipeline was the following:
 *	The Mistral7b instruct model is finetuned using LoRA and PEFT on the translated dataset to increase the model's ability to speak Romanian (takes ~10 minutes on the T4 GPU on free tier Google Colab using Unsloth
 *	The finetuned model is then trained on the ro-text-summarization dataset to obtain the second version of the finetune.
 
+<!--
 Below are the training loss graphs for the two finetuned models (romanian finetuning on left, romanian text summarization finetuning on right):
 
 <div style="display: flex;" align="center">
   <img src="./figs/Loss Romanian finetune.jpg" style="width: 40%;">
   <img src="./figs/Loss Romanian finetune.jpg" style="width: 40%;">
 </div>
+-->
 
 ## Evaluation
 
